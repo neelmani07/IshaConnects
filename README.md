@@ -1,8 +1,8 @@
 # OVERVIEW
 This application tries to bridge the gap between Isha Mediators and other Isha entities distributed over the entire globe by the help of locating them and providing a location based forum.
 
-## GOALS | VERTICALS
--_Help users to locate Isha Entities on map. 
+# GOALS | VERTICALS
+- Help users to locate Isha Entities on map. 
 - Use forums to communicate._
 
 
