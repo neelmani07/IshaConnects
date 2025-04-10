@@ -39,15 +39,17 @@ Map Vertical features 2,7,8
 Forum Vertical features 2,3,4,5,6
 
 
-**MILESTONES**
-UI Design finalization
-Front end design
-Backend design 
-Tech Stacks finalization.
-Database design.
-Project setup.
-End to end api development for features mentioned.
-Adding non functional requirements like exception handling , logging.
-Deployment.
-Testing.
-Scaling up.
+## MILESTONES
+
+- UI Design finalization  
+- Front end design  
+- Backend design  
+- Tech stacks finalization  
+- Database design  
+- Project setup  
+- End-to-end API development for features mentioned  
+- Adding non-functional requirements like exception handling, logging  
+- Deployment  
+- Testing  
+- Scaling up
+
