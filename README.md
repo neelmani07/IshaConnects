@@ -8,7 +8,7 @@ Use forums to communicate._
 
 **FEATURES SPECIFICATIONS**
 Map vertical
-Entities can register themselves with their geographic location.
+Entities can register themselves with their geographic location. //
 Verification of genuine Isha Entity
 Displaying all entities in the map over hovered places/ zoomed places.
 Entities can search around other entities based on city, state, country( if very low population), by nearby distance radius.
@@ -32,7 +32,7 @@ Ability to add comments and comment in threads.
 Map Vertical features 1,3,4,5,6
 Forum Vertical features 1
 
-**Version2 :- **
+**Version2 :- -**
 Map Vertical features 2,7,8
 Forum Vertical features 2,3,4,5,6
 
