@@ -14,9 +14,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -29,15 +31,19 @@ public class PostController {
     private final PointService pointService;
     private final ContactDetailsService contactDetailsService;
 
-    @Operation(summary = "Get paginated posts")
+    @Operation(summary = "Get paginated posts with advanced filtering")
     @GetMapping
     public ResponseEntity<ApiResponse<Page<Post>>> getPosts(
             @Parameter(description = "Keyword to search in posts") @RequestParam(required = false) String keyword,
             @Parameter(description = "State to filter posts") @RequestParam(required = false) String state,
             @Parameter(description = "City to filter posts") @RequestParam(required = false) String city,
-            @Parameter(description = "Field to sort by") @RequestParam(required = false) String sortBy,
+            @Parameter(description = "Start date for filtering") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @Parameter(description = "End date for filtering") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @Parameter(description = "Field to sort by (newest, oldest, votes, comments)") @RequestParam(required = false) String sortBy,
+            @Parameter(description = "Minimum number of votes") @RequestParam(required = false) Integer minVotes,
+            @Parameter(description = "User ID to filter posts") @RequestParam(required = false) Long userId,
             Pageable pageable) {
-        Page<Post> posts = postService.getPosts(keyword, state, city, sortBy, pageable);
+        Page<Post> posts = postService.getPosts(keyword, state, city, startDate, endDate, sortBy, minVotes, userId, pageable);
         return ResponseEntity.ok(ApiResponse.success("Posts retrieved successfully", posts));
     }
 
@@ -83,9 +89,10 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.success("Post deleted successfully", null));
     }
 
-    @Operation(summary = "Search posts")
+    @Operation(summary = "Search posts by keyword")
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<Post>>> searchPosts(@Parameter(description = "Search keyword") @RequestParam String keyword) {
+    public ResponseEntity<ApiResponse<List<Post>>> searchPosts(
+            @Parameter(description = "Search keyword") @RequestParam String keyword) {
         List<Post> posts = postService.searchPostsByKeyword(keyword);
         return ResponseEntity.ok(ApiResponse.success("Search results retrieved successfully", posts));
     }

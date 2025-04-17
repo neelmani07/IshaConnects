@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,15 +72,39 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> searchPostsByKeyword(String keyword) {
-        return postRepository.findByContentContainingIgnoreCase(keyword);
+        return postRepository.searchByKeyword(keyword, Pageable.unpaged()).getContent();
     }
 
     @Override
-    public Page<Post> getPosts(String keyword, String state, String city, String sortBy, Pageable pageable) {
-        if (keyword != null && !keyword.isEmpty()) {
-            return postRepository.findByContentContainingIgnoreCase(keyword, pageable);
+    public Page<Post> getPosts(
+            String keyword,
+            String state,
+            String city,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            String sortBy,
+            Integer minVotes,
+            Long userId,
+            Pageable pageable) {
+        
+        // If userId is provided, get user's posts
+        if (userId != null) {
+            return postRepository.findByCreatedById(userId, pageable);
         }
-        return postRepository.findAll(pageable);
+        
+        // If minVotes is provided, get posts with minimum votes
+        if (minVotes != null && minVotes > 0) {
+            return postRepository.findByMinVotes(minVotes, pageable);
+        }
+        
+        // If sortBy is provided, get sorted posts
+        if (sortBy != null && !sortBy.isEmpty()) {
+            return postRepository.findAllSorted(sortBy, pageable);
+        }
+        
+        // Use combined filters
+        return postRepository.searchWithFilters(
+            keyword, state, city, startDate, endDate, pageable);
     }
 
     @Override
