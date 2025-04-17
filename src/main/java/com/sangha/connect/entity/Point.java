@@ -41,8 +41,9 @@ public class Point {
     @JoinColumn(name = "contact_details_id", nullable = false)
     private ContactDetails contactDetails;
 
-    @Column(name = "toHide", nullable = false)
-    private Boolean toHide;
+    @ManyToOne
+    @JoinColumn(name = "hide_details_id", nullable = false)
+    private HideDetails toHide;
     
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -51,4 +52,17 @@ public class Point {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Transient
+    private Double distance;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 } 

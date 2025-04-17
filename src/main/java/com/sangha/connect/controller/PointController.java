@@ -1,6 +1,7 @@
 package com.sangha.connect.controller;
 
 import com.sangha.common.dto.ApiResponse;
+import com.sangha.connect.dto.PointWithDistanceDTO;
 import com.sangha.connect.entity.Point;
 import com.sangha.connect.service.PointService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,6 +48,36 @@ public class PointController {
             @Parameter(description = "User ID") @PathVariable Long userId,
             @Parameter(description = "Type ID") @PathVariable Long typeId) {
         List<Point> points = pointService.getPointsByUserIdAndTypeId(userId, typeId);
+        return ResponseEntity.ok(ApiResponse.success("Points retrieved successfully", points));
+    }
+
+    @Operation(summary = "Search points within radius")
+    @GetMapping("/search/radius")
+    public ResponseEntity<ApiResponse<List<PointWithDistanceDTO>>> searchWithinRadius(
+            @Parameter(description = "Latitude of the center point") @RequestParam Double latitude,
+            @Parameter(description = "Longitude of the center point") @RequestParam Double longitude,
+            @Parameter(description = "Search radius in kilometers") @RequestParam Double radius) {
+        List<PointWithDistanceDTO> points = pointService.findPointsWithinRadius(latitude, longitude, radius);
+        return ResponseEntity.ok(ApiResponse.success("Points retrieved successfully", points));
+    }
+
+    @Operation(summary = "Search points by city with distance")
+    @GetMapping("/search/city")
+    public ResponseEntity<ApiResponse<List<PointWithDistanceDTO>>> searchByCity(
+            @Parameter(description = "City name") @RequestParam String city,
+            @Parameter(description = "Latitude of the reference point") @RequestParam Double latitude,
+            @Parameter(description = "Longitude of the reference point") @RequestParam Double longitude) {
+        List<PointWithDistanceDTO> points = pointService.findPointsByCityWithDistance(city, latitude, longitude);
+        return ResponseEntity.ok(ApiResponse.success("Points retrieved successfully", points));
+    }
+
+    @Operation(summary = "Search points by state with distance")
+    @GetMapping("/search/state")
+    public ResponseEntity<ApiResponse<List<PointWithDistanceDTO>>> searchByState(
+            @Parameter(description = "State name") @RequestParam String state,
+            @Parameter(description = "Latitude of the reference point") @RequestParam Double latitude,
+            @Parameter(description = "Longitude of the reference point") @RequestParam Double longitude) {
+        List<PointWithDistanceDTO> points = pointService.findPointsByStateWithDistance(state, latitude, longitude);
         return ResponseEntity.ok(ApiResponse.success("Points retrieved successfully", points));
     }
 
