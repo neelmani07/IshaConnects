@@ -1,9 +1,12 @@
 package com.sangha.forum.service;
 
 import com.sangha.connect.entity.ContactDetails;
+import com.sangha.forum.entity.Comment;
 import com.sangha.forum.entity.Mention;
+import com.sangha.forum.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

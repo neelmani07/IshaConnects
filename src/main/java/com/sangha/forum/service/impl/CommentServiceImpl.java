@@ -10,6 +10,7 @@ import com.sangha.forum.repository.CommentRepository;
 import com.sangha.forum.repository.PostRepository;
 import com.sangha.forum.service.CommentService;
 import com.sangha.forum.service.MentionService;
+import com.sangha.forum.service.NotificationService;
 import com.sangha.forum.service.ReputationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
     private final ReputationService reputationService;
     private final MentionService mentionService;
+    private final NotificationService notificationService;
 
     @Override
     public List<Comment> getAllComments() {
@@ -64,13 +66,16 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Comment savedComment = commentRepository.save(comment);
-        
+
         // Process mentions in the comment content
         mentionService.processMentions(comment.getContent(), null, savedComment);
-        
+
         // Award points for creating a comment
         reputationService.addPoints(createdBy, ReputationConfig.COMMENT_CREATION_POINTS, "COMMENT_CREATION", savedComment.getId());
-        
+
+        // Send notification to post owner
+        notificationService.sendCommentNotification(post.getUser(), createdBy, postId, savedComment.getId());
+
         return savedComment;
     }
 
@@ -80,10 +85,10 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = getCommentById(id);
         comment.setContent(commentDTO.getContent());
         comment.setUpdatedAt(LocalDateTime.now());
-        
+
         // Process mentions in the updated content
         mentionService.processMentions(commentDTO.getContent(), null, comment);
-        
+
         return commentRepository.save(comment);
     }
 
@@ -105,7 +110,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = getCommentById(commentId);
         comment.setVotes(comment.getVotes() + 1);
         commentRepository.save(comment);
-        
+
         // Award points to comment author for upvote
         reputationService.addPoints(comment.getCreatedBy(), ReputationConfig.COMMENT_UPVOTE_POINTS, "COMMENT_UPVOTE", commentId);
     }
@@ -116,7 +121,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = getCommentById(commentId);
         comment.setVotes(comment.getVotes() - 1);
         commentRepository.save(comment);
-        
+
         // Deduct points from comment author for downvote
         reputationService.removePoints(comment.getCreatedBy(), ReputationConfig.COMMENT_DOWNVOTE_POINTS, "COMMENT_DOWNVOTE", commentId);
     }
@@ -126,26 +131,29 @@ public class CommentServiceImpl implements CommentService {
     public Comment markAsAccepted(Long commentId, ContactDetails user) {
         Comment comment = getCommentById(commentId);
         Post post = comment.getPost();
-        
+
         // Only post author can mark answers as accepted
         if (!post.getUser().equals(user)) {
             throw new IllegalStateException("Only post author can mark answers as accepted");
         }
-        
+
         // Unmark any previously accepted answer
         List<Comment> acceptedComments = commentRepository.findByPostIdAndIsAcceptedTrue(post.getId());
         for (Comment acceptedComment : acceptedComments) {
             acceptedComment.setAccepted(false);
             commentRepository.save(acceptedComment);
         }
-        
+
         // Mark new answer as accepted
         comment.setAccepted(true);
         Comment savedComment = commentRepository.save(comment);
-        
+
         // Award points for accepted answer
         reputationService.addPoints(comment.getCreatedBy(), ReputationConfig.ANSWER_ACCEPTED_POINTS, "ANSWER_ACCEPTED", commentId);
-        
+
+        // Send notification to the comment author
+        notificationService.sendAcceptedAnswerNotification(comment.getCreatedBy(), user, post.getId(), commentId);
+
         return savedComment;
     }
 
@@ -154,15 +162,15 @@ public class CommentServiceImpl implements CommentService {
     public void unmarkAsAccepted(Long commentId, ContactDetails user) {
         Comment comment = getCommentById(commentId);
         Post post = comment.getPost();
-        
+
         // Only post author can unmark accepted answers
         if (!post.getUser().equals(user)) {
             throw new IllegalStateException("Only post author can unmark accepted answers");
         }
-        
+
         comment.setAccepted(false);
         commentRepository.save(comment);
-        
+
         // Deduct points for unmarking accepted answer
         reputationService.removePoints(comment.getCreatedBy(), ReputationConfig.ANSWER_UNMARKED_POINTS, "ANSWER_UNMARKED", commentId);
     }

@@ -10,6 +10,7 @@ import com.sangha.forum.entity.VoteType;
 import com.sangha.forum.exception.ResourceNotFoundException;
 import com.sangha.forum.repository.PostRepository;
 import com.sangha.forum.repository.PostVotesRepository;
+import com.sangha.forum.service.NotificationService;
 import com.sangha.forum.service.PostService;
 import com.sangha.forum.service.ReputationService;
 import com.sangha.forum.util.ContentSanitizer;
@@ -34,6 +35,7 @@ public class PostServiceImpl implements PostService {
     private final ContentSanitizer contentSanitizer;
     private final ReputationService reputationService;
     private final MentionService mentionService;
+    private final NotificationService notificationService;
 
     @Override
     public List<Post> getAllPosts() {
@@ -60,13 +62,13 @@ public class PostServiceImpl implements PostService {
         post.setCreatedBy(createdBy);
         post.setImageUrl(request.getImageUrl());
         Post savedPost = postRepository.save(post);
-        
+
         // Process mentions in the post content
         mentionService.processMentions(post.getContent(), savedPost, null);
-        
+
         // Award points for creating a post
         reputationService.addPoints(createdBy, ReputationConfig.POST_CREATION_POINTS, "POST_CREATION", savedPost.getId());
-        
+
         return savedPost;
     }
 
@@ -82,10 +84,10 @@ public class PostServiceImpl implements PostService {
         post.setEditorVersion(request.getEditorVersion());
         post.setImageUrl(request.getImageUrl());
         post.setUpdatedAt(LocalDateTime.now());
-        
+
         // Process mentions in the updated content
         mentionService.processMentions(request.getContent(), post, null);
-        
+
         return postRepository.save(post);
     }
 
@@ -117,25 +119,25 @@ public class PostServiceImpl implements PostService {
             Integer minVotes,
             Long userId,
             Pageable pageable) {
-        
+
         // If userId is provided, get user's posts
         if (userId != null) {
             return postRepository.findByCreatedById(userId, pageable);
         }
-        
+
         // If minVotes is provided, get posts with minimum votes
         if (minVotes != null && minVotes > 0) {
             return postRepository.findByMinVotes(minVotes, pageable);
         }
-        
+
         // If sortBy is provided, get sorted posts
         if (sortBy != null && !sortBy.isEmpty()) {
             return postRepository.findAllSorted(sortBy, pageable);
         }
-        
+
         // Use combined filters
         return postRepository.searchWithFilters(
-            keyword, state, city, startDate, endDate, pageable);
+                keyword, state, city, startDate, endDate, pageable);
     }
 
     @Override
@@ -151,7 +153,7 @@ public class PostServiceImpl implements PostService {
     public Post upvotePost(Long id, ContactDetails voter) {
         Post post = getPostById(id);
         Optional<PostVotes> existingVote = postVotesRepository.findByPostIdAndVotedById(id, voter.getId());
-        
+
         if (existingVote.isPresent()) {
             PostVotes vote = existingVote.get();
             if (vote.getVoteType() == VoteType.DOWN) {
@@ -165,10 +167,13 @@ public class PostServiceImpl implements PostService {
             newVote.setVoteType(VoteType.UP);
             postVotesRepository.save(newVote);
         }
-        
+
         // Award points to post author for upvote
         reputationService.addPoints(post.getCreatedBy(), ReputationConfig.POST_UPVOTE_POINTS, "POST_UPVOTE", id);
-        
+
+        // Send notification to post owner
+        notificationService.sendUpvoteNotification(post.getUser(), voter, id);
+
         return postRepository.save(post);
     }
 
@@ -177,7 +182,7 @@ public class PostServiceImpl implements PostService {
     public Post downvotePost(Long id, ContactDetails voter) {
         Post post = getPostById(id);
         Optional<PostVotes> existingVote = postVotesRepository.findByPostIdAndVotedById(id, voter.getId());
-        
+
         if (existingVote.isPresent()) {
             PostVotes vote = existingVote.get();
             if (vote.getVoteType() == VoteType.UP) {
@@ -191,10 +196,10 @@ public class PostServiceImpl implements PostService {
             newVote.setVoteType(VoteType.DOWN);
             postVotesRepository.save(newVote);
         }
-        
+
         // Deduct points from post author for downvote
         reputationService.removePoints(post.getCreatedBy(), ReputationConfig.POST_DOWNVOTE_POINTS, "POST_DOWNVOTE", id);
-        
+
         return postRepository.save(post);
     }
 

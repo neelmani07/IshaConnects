@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,8 +27,8 @@ public class MentionServiceImpl implements MentionService {
     @Autowired
     private ContactDetailsRepository contactDetailsRepository;
 
-    @Override
     @Transactional
+    @Override
     public void processMentions(String content, Post post, Comment comment) {
         List<String> usernames = MentionParser.extractMentions(content);
         List<ContactDetails> users = usernames.stream()
@@ -72,7 +73,7 @@ public class MentionServiceImpl implements MentionService {
     @Override
     @Transactional
     public void markAllAsRead(ContactDetails user) {
-        List<Mention> unreadMentions = mentionRepository.findByMentionedUserAndIsReadFalse(user, null);
+        List<Mention> unreadMentions = (List<Mention>) mentionRepository.findByMentionedUserAndIsReadFalse(user, null);
         for (Mention mention : unreadMentions) {
             mention.setRead(true);
             mentionRepository.save(mention);

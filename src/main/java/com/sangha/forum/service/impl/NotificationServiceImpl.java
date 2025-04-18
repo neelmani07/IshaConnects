@@ -24,24 +24,53 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public void sendMentionNotification(ContactDetails mentionedUser, ContactDetails mentionedBy,
-                                      Long postId, Long commentId, String content) {
+    public void sendMentionNotification(ContactDetails mentionedUser, ContactDetails mentionedBy, Long postId, Long commentId, String content) {
         NotificationDTO notification = new NotificationDTO();
         notification.setType("MENTION");
-        notification.setMessage(mentionedBy.getName() + " mentioned you in " + 
-                              (commentId != null ? "a comment" : "a post"));
+        notification.setMessage(mentionedBy.getName() + " mentioned you in " + (commentId != null ? "a comment" : "a post"));
         notification.setPostId(postId);
         notification.setCommentId(commentId);
-        notification.setMentionedBy(mentionedBy.getName());
         notification.setCreatedAt(LocalDateTime.now());
         notification.setRead(false);
+        messagingTemplate.convertAndSendToUser(mentionedUser.getEmail(), "/topic/notifications", notification);
+    }
 
-        // Send notification to specific user
-        messagingTemplate.convertAndSendToUser(
-            mentionedUser.getEmail(),
-            "/topic/notifications",
-            notification
-        );
+    @Override
+    @Transactional
+    public void sendUpvoteNotification(ContactDetails postOwner, ContactDetails user, Long postId) {
+        NotificationDTO notification = new NotificationDTO();
+        notification.setType("UPVOTE");
+        notification.setMessage(user.getName() + " upvoted your post.");
+        notification.setPostId(postId);
+        notification.setCreatedAt(LocalDateTime.now());
+        notification.setRead(false);
+        messagingTemplate.convertAndSendToUser(postOwner.getEmail(), "/topic/notifications", notification);
+    }
+
+    @Override
+    @Transactional
+    public void sendAcceptedAnswerNotification(ContactDetails postOwner, ContactDetails user, Long postId, Long commentId) {
+        NotificationDTO notification = new NotificationDTO();
+        notification.setType("ACCEPTED_ANSWER");
+        notification.setMessage(user.getName() + " accepted your answer.");
+        notification.setPostId(postId);
+        notification.setCommentId(commentId);
+        notification.setCreatedAt(LocalDateTime.now());
+        notification.setRead(false);
+        messagingTemplate.convertAndSendToUser(postOwner.getEmail(), "/topic/notifications", notification);
+    }
+
+    @Override
+    @Transactional
+    public void sendCommentNotification(ContactDetails postOwner, ContactDetails user, Long postId, Long commentId) {
+        NotificationDTO notification = new NotificationDTO();
+        notification.setType("COMMENT");
+        notification.setMessage(user.getName() + " commented on your post.");
+        notification.setPostId(postId);
+        notification.setCommentId(commentId);
+        notification.setCreatedAt(LocalDateTime.now());
+        notification.setRead(false);
+        messagingTemplate.convertAndSendToUser(postOwner.getEmail(), "/topic/notifications", notification);
     }
 
     @Override
