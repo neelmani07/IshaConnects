@@ -116,4 +116,11 @@ public class PostController {
         Post post = postService.downvotePost(postId, voter);
         return ResponseEntity.ok(ApiResponse.success("Post downvoted successfully", post));
     }
+
+    @PostMapping("/preview")
+    @Operation(summary = "Preview post content")
+    public ResponseEntity<ApiResponse<String>> previewPost(@RequestBody PostRequest request) {
+        String preview = postService.generatePreview(request.getContentHtml());
+        return ResponseEntity.ok(ApiResponse.success("Preview generated successfully", preview));
+    }
 }

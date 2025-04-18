@@ -11,6 +11,10 @@ import com.sangha.forum.exception.ResourceNotFoundException;
 import com.sangha.forum.repository.PostRepository;
 import com.sangha.forum.repository.PostVotesRepository;
 import com.sangha.forum.service.PostService;
+import com.sangha.forum.service.ReputationService;
+import com.sangha.forum.util.ContentSanitizer;
+import com.sangha.forum.config.ReputationConfig;
+import com.sangha.forum.service.MentionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +31,9 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final PostVotesRepository postVotesRepository;
+    private final ContentSanitizer contentSanitizer;
+    private final ReputationService reputationService;
+    private final MentionService mentionService;
 
     @Override
     public List<Post> getAllPosts() {
@@ -43,21 +50,42 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public Post createPost(PostRequest request, Point point, ContactDetails createdBy) {
         Post post = new Post();
-        post.setTitle(request.getTitle());
+        post.setTitle(contentSanitizer.sanitizePlainText(request.getTitle()));
         post.setContent(request.getContent());
-        post.setImageUrl(request.getImageUrl());
+        post.setContentHtml(contentSanitizer.sanitizeHtml(request.getContentHtml()));
+        post.setContentPlain(contentSanitizer.sanitizePlainText(request.getContentPlain()));
+        post.setContentPreview(contentSanitizer.generatePreview(request.getContentHtml()));
+        post.setEditorVersion(request.getEditorVersion());
         post.setPoint(point);
         post.setCreatedBy(createdBy);
-        return postRepository.save(post);
+        post.setImageUrl(request.getImageUrl());
+        Post savedPost = postRepository.save(post);
+        
+        // Process mentions in the post content
+        mentionService.processMentions(post.getContent(), savedPost, null);
+        
+        // Award points for creating a post
+        reputationService.addPoints(createdBy, ReputationConfig.POST_CREATION_POINTS, "POST_CREATION", savedPost.getId());
+        
+        return savedPost;
     }
 
     @Override
     @Transactional
     public Post updatePost(Long id, PostRequest request) {
         Post post = getPostById(id);
-        post.setTitle(request.getTitle());
+        post.setTitle(contentSanitizer.sanitizePlainText(request.getTitle()));
         post.setContent(request.getContent());
+        post.setContentHtml(contentSanitizer.sanitizeHtml(request.getContentHtml()));
+        post.setContentPlain(contentSanitizer.sanitizePlainText(request.getContentPlain()));
+        post.setContentPreview(contentSanitizer.generatePreview(request.getContentHtml()));
+        post.setEditorVersion(request.getEditorVersion());
         post.setImageUrl(request.getImageUrl());
+        post.setUpdatedAt(LocalDateTime.now());
+        
+        // Process mentions in the updated content
+        mentionService.processMentions(request.getContent(), post, null);
+        
         return postRepository.save(post);
     }
 
@@ -67,6 +95,9 @@ public class PostServiceImpl implements PostService {
         if (!postRepository.existsById(id)) {
             throw new ResourceNotFoundException("Post", "id", id);
         }
+        Post post = getPostById(id);
+        // Deduct points for post deletion
+        reputationService.removePoints(post.getCreatedBy(), ReputationConfig.POST_DELETION_POINTS, "POST_DELETION", id);
         postRepository.deleteById(id);
     }
 
@@ -135,6 +166,9 @@ public class PostServiceImpl implements PostService {
             postVotesRepository.save(newVote);
         }
         
+        // Award points to post author for upvote
+        reputationService.addPoints(post.getCreatedBy(), ReputationConfig.POST_UPVOTE_POINTS, "POST_UPVOTE", id);
+        
         return postRepository.save(post);
     }
 
@@ -158,6 +192,14 @@ public class PostServiceImpl implements PostService {
             postVotesRepository.save(newVote);
         }
         
+        // Deduct points from post author for downvote
+        reputationService.removePoints(post.getCreatedBy(), ReputationConfig.POST_DOWNVOTE_POINTS, "POST_DOWNVOTE", id);
+        
         return postRepository.save(post);
+    }
+
+    @Override
+    public String generatePreview(String htmlContent) {
+        return contentSanitizer.generatePreview(htmlContent);
     }
 }

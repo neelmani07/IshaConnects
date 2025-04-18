@@ -1,42 +1,41 @@
 package com.sangha.forum.entity;
 
+import com.sangha.connect.entity.ContactDetails;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tags")
-public class Tag {
+@Table(name = "reputation_history")
+public class ReputationHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private ContactDetails user;
 
-    private String description;
+    @Column(name = "points_change", nullable = false)
+    private Integer pointsChange;
 
-    @ManyToMany(mappedBy = "tags")
-    private List<Post> posts = new ArrayList<>();
+    @Column(name = "source_type", nullable = false)
+    private String sourceType;
+
+    @Column(name = "source_id", nullable = false)
+    private Long sourceId;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-}
+} 

@@ -50,4 +50,7 @@ public interface PostService {
 
     // Update a post
     Post updatePost(Long id, PostRequest request);
+
+    // Generate preview for post content
+    String generatePreview(String htmlContent);
 }

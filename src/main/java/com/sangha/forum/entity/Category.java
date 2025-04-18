@@ -17,26 +17,33 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tags")
-public class Tag {
+@Table(name = "categories")
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, unique = true)
+    
+    @Column(nullable = false)
     private String name;
-
+    
     private String description;
-
-    @ManyToMany(mappedBy = "tags")
+    
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Category parent;
+    
+    @OneToMany(mappedBy = "parent")
+    private List<Category> subcategories = new ArrayList<>();
+    
+    @ManyToMany(mappedBy = "categories")
     private List<Post> posts = new ArrayList<>();
-
+    
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
+    
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-}
+} 

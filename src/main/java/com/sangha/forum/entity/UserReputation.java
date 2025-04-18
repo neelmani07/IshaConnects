@@ -1,5 +1,6 @@
 package com.sangha.forum.entity;
 
+import com.sangha.connect.entity.ContactDetails;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,28 +10,28 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tags")
-public class Tag {
+@Table(name = "user_reputation")
+public class UserReputation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private ContactDetails user;
 
-    private String description;
+    @Column(name = "total_points", nullable = false)
+    private Integer totalPoints = 0;
 
-    @ManyToMany(mappedBy = "tags")
-    private List<Post> posts = new ArrayList<>();
+    @Column(name = "current_level", nullable = false)
+    private Integer currentLevel = 1;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -39,4 +40,4 @@ public class Tag {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-}
+} 
