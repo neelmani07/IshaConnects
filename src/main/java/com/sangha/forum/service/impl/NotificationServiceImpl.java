@@ -74,6 +74,18 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    @Transactional
+    public void sendCategoryNotification(ContactDetails user, Category category, String message) {
+        NotificationDTO notification = new NotificationDTO();
+        notification.setType("CATEGORY");
+        notification.setMessage(message);
+        notification.setCategoryId(category.getId());
+        notification.setCreatedAt(LocalDateTime.now());
+        notification.setRead(false);
+        messagingTemplate.convertAndSendToUser(user.getEmail(), "/topic/notifications", notification);
+    }
+
+    @Override
     public Page<NotificationDTO> getUserNotifications(ContactDetails user, Pageable pageable) {
         // TODO: Implement if we want to store notifications in database
         return null;

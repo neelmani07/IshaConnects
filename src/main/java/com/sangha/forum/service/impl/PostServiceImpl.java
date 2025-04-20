@@ -16,6 +16,7 @@ import com.sangha.forum.service.ReputationService;
 import com.sangha.forum.util.ContentSanitizer;
 import com.sangha.forum.config.ReputationConfig;
 import com.sangha.forum.service.MentionService;
+import com.sangha.forum.service.UserSubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +37,7 @@ public class PostServiceImpl implements PostService {
     private final ReputationService reputationService;
     private final MentionService mentionService;
     private final NotificationService notificationService;
+    private final UserSubscriptionService userSubscriptionService;
 
     @Override
     public List<Post> getAllPosts() {
@@ -65,6 +67,14 @@ public class PostServiceImpl implements PostService {
 
         // Process mentions in the post content
         mentionService.processMentions(post.getContent(), savedPost, null);
+
+        // Notify category subscribers
+        if (post.getCategory() != null) {
+            userSubscriptionService.notifySubscribers(
+                post.getCategory(),
+                "New post in category " + post.getCategory().getName() + ": " + post.getTitle()
+            );
+        }
 
         // Award points for creating a post
         reputationService.addPoints(createdBy, ReputationConfig.POST_CREATION_POINTS, "POST_CREATION", savedPost.getId());
