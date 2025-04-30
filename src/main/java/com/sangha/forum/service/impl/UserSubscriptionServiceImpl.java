@@ -67,7 +67,7 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
                 subscription.getUser(),
                 category,
                 message
-            );
+            ); 
         });
     }
 } 
