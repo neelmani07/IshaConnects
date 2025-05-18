@@ -1,6 +1,6 @@
-package com.sangha.forum.repository;
+package com.sangha.common.repository;
 
-import com.sangha.forum.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
