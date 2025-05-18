@@ -2,6 +2,7 @@ package com.sangha.forum.service.impl;
 
 import com.sangha.connect.entity.ContactDetails;
 import com.sangha.forum.dto.NotificationDTO;
+import com.sangha.forum.entity.Category;
 import com.sangha.forum.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

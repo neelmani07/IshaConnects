@@ -100,4 +100,8 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }

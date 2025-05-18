@@ -1,6 +1,6 @@
 package com.sangha.forum.service.impl;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.forum.entity.ContactDetails;
 import com.sangha.forum.repository.ContactDetailsRepository;
 import com.sangha.forum.service.ContactDetailsService;
 import lombok.RequiredArgsConstructor;

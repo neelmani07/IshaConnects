@@ -1,5 +1,6 @@
 package com.sangha.forum.entity;
 
+import com.sangha.connect.entity.ContactDetails;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
