@@ -34,12 +34,10 @@ public class ConnectionServiceImpl implements ConnectionService {
         ContactDetails sender = contactDetailsService.getContactDetailsById(senderId);
         ContactDetails receiver = contactDetailsService.getContactDetailsById(receiverId);
         
-        // Check if request already exists
         if (connectionRequestRepository.existsBySenderAndReceiver(sender, receiver)) {
             throw new BadRequestException("Connection request already sent");
         }
         
-        // Check if already connected
         if (connectionRepository.existsByUser1AndUser2(sender, receiver)) {
             throw new BadRequestException("Already connected");
         }
@@ -51,7 +49,6 @@ public class ConnectionServiceImpl implements ConnectionService {
         request.setStatus(ConnectionStatus.PENDING);
         request = connectionRequestRepository.save(request);
         
-        // Send real-time notification
         sendConnectionRequestNotification(receiver, sender.getName(), message);
         
         return request;
@@ -64,13 +61,11 @@ public class ConnectionServiceImpl implements ConnectionService {
         request.setStatus(ConnectionStatus.ACCEPTED);
         connectionRequestRepository.save(request);
         
-        // Create connection
         Connection connection = new Connection();
         connection.setUser1(request.getSender());
         connection.setUser2(request.getReceiver());
         connection = connectionRepository.save(connection);
         
-        // Send notifications to both users
         notifyConnectionEstablished(request.getSender(), request.getReceiver());
         notifyConnectionEstablished(request.getReceiver(), request.getSender());
         
@@ -84,7 +79,6 @@ public class ConnectionServiceImpl implements ConnectionService {
         request.setStatus(ConnectionStatus.REJECTED);
         connectionRequestRepository.save(request);
         
-        // Notify sender about rejection
         notifyRequestRejected(request.getSender(), request.getReceiver().getName());
     }
     
@@ -98,7 +92,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         return connectionRepository.findConnectedUsers(userId);
     }
     
-    private ConnectionRequest getRequest(Long requestId) throws ResourceNotFoundException {
+    private ConnectionRequest getRequest(Long requestId) {
         return connectionRequestRepository.findById(requestId)
                 .orElseThrow(() -> new ResourceNotFoundException("ConnectionRequest", "id", requestId));
     }
