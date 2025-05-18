@@ -1,4 +1,4 @@
-package com.sangha.connect.service;
+package com.sangha.connect.service.impl;
 
 import com.sangha.connect.dto.ConnectionNotification;
 import com.sangha.connect.dto.ConnectionRejectionNotification;
@@ -11,27 +11,14 @@ import com.sangha.connect.exception.BadRequestException;
 import com.sangha.connect.exception.ResourceNotFoundException;
 import com.sangha.connect.repository.ConnectionRepository;
 import com.sangha.connect.repository.ConnectionRequestRepository;
+import com.sangha.connect.service.ConnectionService;
+import com.sangha.connect.service.ContactDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-public interface ConnectionService {
-    @Transactional
-    ConnectionRequest sendRequest(Long senderId, Long receiverId, String message) throws BadRequestException;
-    
-    @Transactional
-    Connection acceptRequest(Long requestId) throws ResourceNotFoundException;
-    
-    @Transactional
-    void rejectRequest(Long requestId) throws ResourceNotFoundException;
-    
-    List<ConnectionRequest> getPendingRequests(Long userId);
-    
-    List<ContactDetails> getConnections(Long userId);
-}
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +28,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     private final ContactDetailsService contactDetailsService;
     private final SimpMessagingTemplate messagingTemplate;
     
+    @Override
     @Transactional
     public ConnectionRequest sendRequest(Long senderId, Long receiverId, String message) throws BadRequestException {
         ContactDetails sender = contactDetailsService.getContactDetailsById(senderId);
@@ -69,6 +57,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         return request;
     }
     
+    @Override
     @Transactional
     public Connection acceptRequest(Long requestId) throws ResourceNotFoundException {
         ConnectionRequest request = getRequest(requestId);
@@ -88,6 +77,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         return connection;
     }
     
+    @Override
     @Transactional
     public void rejectRequest(Long requestId) throws ResourceNotFoundException {
         ConnectionRequest request = getRequest(requestId);
@@ -98,15 +88,17 @@ public class ConnectionServiceImpl implements ConnectionService {
         notifyRequestRejected(request.getSender(), request.getReceiver().getName());
     }
     
+    @Override
     public List<ConnectionRequest> getPendingRequests(Long userId) {
         return connectionRequestRepository.findByReceiverIdAndStatus(userId, ConnectionStatus.PENDING);
     }
     
+    @Override
     public List<ContactDetails> getConnections(Long userId) {
         return connectionRepository.findConnectedUsers(userId);
     }
     
-    private ConnectionRequest getRequest(Long requestId) {
+    private ConnectionRequest getRequest(Long requestId) throws ResourceNotFoundException {
         return connectionRequestRepository.findById(requestId)
                 .orElseThrow(() -> new ResourceNotFoundException("ConnectionRequest", "id", requestId));
     }

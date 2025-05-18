@@ -15,21 +15,17 @@ public interface PointRepository extends JpaRepository<Point, Long> {
     @Query("SELECT p FROM Point p WHERE p.contactDetails.id = :contactDetailsId AND p.pointType.id = :pointTypeId")
     List<Point> findByContactDetailsIdAndPointTypeId(@Param("contactDetailsId") Long contactDetailsId, @Param("pointTypeId") Long pointTypeId);
 
-    @Query(value = """
-        SELECT p.*, 
-               (6371 * acos(cos(radians(:latitude)) * cos(radians(p.latitude)) * 
-               cos(radians(p.longitude) - radians(:longitude)) + 
-               sin(radians(:latitude)) * sin(radians(p.latitude)))) AS distance
-        FROM point p
-        WHERE (6371 * acos(cos(radians(:latitude)) * cos(radians(p.latitude)) * 
-              cos(radians(p.longitude) - radians(:longitude)) + 
-              sin(radians(:latitude)) * sin(radians(p.latitude)))) <= :radius
-        ORDER BY distance
-        """, nativeQuery = true)
-    List<Point> findPointsWithinRadius(
-            @Param("latitude") Double latitude,
-            @Param("longitude") Double longitude,
-            @Param("radius") Double radius);
+    @Query(value = "SELECT p.*, " +
+            "ST_Distance_Sphere(" +
+            "point(p.longitude, p.latitude), " +
+            "point(:longitude, :latitude)" +
+            ") as distance " +
+            "FROM point p " +
+            "HAVING distance <= :radius " +
+            "ORDER BY distance", nativeQuery = true)
+    List<Point> findPointsWithinRadius(@Param("latitude") Double latitude, 
+                                     @Param("longitude") Double longitude, 
+                                     @Param("radius") Double radius);
 
     @Query(value = """
         SELECT p.*, 
@@ -60,4 +56,7 @@ public interface PointRepository extends JpaRepository<Point, Long> {
             @Param("state") String state,
             @Param("latitude") Double latitude,
             @Param("longitude") Double longitude);
+
+    List<Point> findByCity(String city);
+    List<Point> findByState(String state);
 } 
