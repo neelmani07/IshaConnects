@@ -1,6 +1,6 @@
 package com.sangha.forum.entity;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

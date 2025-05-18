@@ -3,8 +3,8 @@ package com.sangha.connect.service;
 import com.sangha.connect.entity.Connection;
 import com.sangha.connect.entity.ConnectionRequest;
 import com.sangha.common.entity.ContactDetails;
-import com.sangha.connect.exception.BadRequestException;
-import com.sangha.connect.exception.ResourceNotFoundException;
+import com.sangha.common.exception.BadRequestException;
+import com.sangha.common.exception.ResourceNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

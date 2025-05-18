@@ -1,7 +1,7 @@
 package com.sangha.connect.service.impl;
 
 import com.sangha.connect.entity.PointType;
-import com.sangha.connect.exception.ResourceNotFoundException;
+import com.sangha.common.exception.ResourceNotFoundException;
 import com.sangha.connect.repository.PointTypeRepository;
 import com.sangha.connect.service.PointTypeService;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.sangha.connect.service.impl;
 
 import com.sangha.connect.dto.PointWithDistanceDTO;
 import com.sangha.connect.entity.Point;
-import com.sangha.connect.exception.ResourceNotFoundException;
+import com.sangha.common.exception.ResourceNotFoundException;
 import com.sangha.connect.repository.PointRepository;
 import com.sangha.connect.service.PointService;
 import lombok.RequiredArgsConstructor;

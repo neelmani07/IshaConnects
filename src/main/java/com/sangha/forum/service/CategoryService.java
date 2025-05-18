@@ -1,7 +1,8 @@
 package com.sangha.forum.service;
 
 import com.sangha.forum.entity.Category;
-import com.sangha.forum.exception.ResourceNotFoundException;
+import com.sangha.common.exception.ResourceNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

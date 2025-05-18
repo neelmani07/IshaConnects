@@ -5,7 +5,7 @@ import com.sangha.forum.config.ReputationConfig;
 import com.sangha.forum.dto.CommentDTO;
 import com.sangha.forum.entity.Comment;
 import com.sangha.forum.entity.Post;
-import com.sangha.forum.exception.ResourceNotFoundException;
+import com.sangha.common.exception.ResourceNotFoundException;
 import com.sangha.forum.repository.CommentRepository;
 import com.sangha.forum.repository.PostRepository;
 import com.sangha.forum.service.CommentService;

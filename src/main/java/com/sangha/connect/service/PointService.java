@@ -2,7 +2,7 @@ package com.sangha.connect.service;
 
 import com.sangha.connect.dto.PointWithDistanceDTO;
 import com.sangha.connect.entity.Point;
-import com.sangha.connect.exception.ResourceNotFoundException;
+import com.sangha.common.exception.ResourceNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

@@ -1,11 +1,11 @@
 package com.sangha.forum.service.impl;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.forum.dto.ReportRequestDTO;
 import com.sangha.forum.entity.Post;
 import com.sangha.forum.entity.Report;
 import com.sangha.forum.entity.ReportStatus;
-import com.sangha.forum.exception.ResourceNotFoundException;
+import com.sangha.common.exception.ResourceNotFoundException;
 import com.sangha.forum.repository.PostRepository;
 import com.sangha.forum.repository.ReportRepository;
 import com.sangha.forum.service.ReportService;
@@ -45,7 +45,7 @@ public class ReportServiceImpl implements ReportService {
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new ResourceNotFoundException("Report", "id", reportId));
 
-        report.setStatus(ReportStatus.valueOf(status.toUpperCase()));
+        report.setStatus(ReportStatus.valueOf(status));
         report.setModeratorNotes(moderatorNotes);
         report.setModerator(moderator);
 

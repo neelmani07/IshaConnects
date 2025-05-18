@@ -7,7 +7,7 @@ import com.sangha.forum.entity.Post;
 import com.sangha.forum.entity.Comment;
 import com.sangha.forum.entity.PostVotes;
 import com.sangha.forum.entity.VoteType;
-import com.sangha.forum.exception.ResourceNotFoundException;
+import com.sangha.common.exception.ResourceNotFoundException;
 import com.sangha.forum.repository.PostRepository;
 import com.sangha.forum.repository.PostVotesRepository;
 import com.sangha.forum.service.NotificationService;

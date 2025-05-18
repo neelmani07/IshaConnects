@@ -1,7 +1,7 @@
 package com.sangha.forum.service.impl;
 
 import com.sangha.forum.entity.Category;
-import com.sangha.forum.exception.ResourceNotFoundException;
+import com.sangha.common.exception.ResourceNotFoundException;
 import com.sangha.forum.repository.CategoryRepository;
 import com.sangha.forum.service.CategoryService;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.sangha.connect.service;
 
 import com.sangha.connect.entity.HideDetails;
-import com.sangha.connect.exception.ResourceNotFoundException;
+import com.sangha.common.exception.ResourceNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

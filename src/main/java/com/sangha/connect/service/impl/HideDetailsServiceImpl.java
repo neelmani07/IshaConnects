@@ -1,7 +1,7 @@
 package com.sangha.connect.service.impl;
 
 import com.sangha.connect.entity.HideDetails;
-import com.sangha.connect.exception.ResourceNotFoundException;
+import com.sangha.common.exception.ResourceNotFoundException;
 import com.sangha.connect.repository.HideDetailsRepository;
 import com.sangha.connect.service.HideDetailsService;
 import lombok.RequiredArgsConstructor;

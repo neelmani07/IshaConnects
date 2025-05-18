@@ -1,6 +1,6 @@
 package com.sangha.forum.controller;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.forum.dto.ReportRequestDTO;
 import com.sangha.forum.entity.Report;
 import com.sangha.forum.service.ReportService;

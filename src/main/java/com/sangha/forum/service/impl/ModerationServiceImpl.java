@@ -1,11 +1,11 @@
 package com.sangha.forum.service.impl;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.forum.dto.ModerationRequestDTO;
 import com.sangha.forum.entity.Post;
 import com.sangha.forum.entity.PostModeration;
 import com.sangha.forum.entity.ModerationStatus;
-import com.sangha.forum.exception.ResourceNotFoundException;
+import com.sangha.common.exception.ResourceNotFoundException;
 import com.sangha.forum.repository.PostModerationRepository;
 import com.sangha.forum.repository.PostRepository;
 import com.sangha.forum.service.ModerationService;
