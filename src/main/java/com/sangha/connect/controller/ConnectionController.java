@@ -3,7 +3,7 @@ package com.sangha.connect.controller;
 import com.sangha.common.dto.ApiResponse;
 import com.sangha.connect.entity.Connection;
 import com.sangha.connect.entity.ConnectionRequest;
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.connect.service.ConnectionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

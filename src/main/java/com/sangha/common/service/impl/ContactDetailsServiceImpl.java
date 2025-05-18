@@ -1,13 +1,18 @@
-package com.sangha.connect.service.impl;
+package com.sangha.common.service.impl;
 
-import com.sangha.connect.entity.ContactDetails;
-import com.sangha.connect.exception.ResourceNotFoundException;
-import com.sangha.connect.repository.ContactDetailsRepository;
-import com.sangha.connect.service.ContactDetailsService;
+import com.sangha.common.entity.ContactDetails;
+import com.sangha.common.exception.ResourceNotFoundException;
+import com.sangha.common.repository.ContactDetailsRepository;
+import com.sangha.common.service.ContactDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -15,6 +20,26 @@ import java.util.List;
 public class ContactDetailsServiceImpl implements ContactDetailsService {
 
     private final ContactDetailsRepository contactDetailsRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        ContactDetails user = contactDetailsRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        return new User(user.getEmail(), user.getPassword(),
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
+    }
+
+    @Override
+    public ContactDetails save(ContactDetails user) {
+        return contactDetailsRepository.save(user);
+    }
+
+    @Override
+    public ContactDetails findByEmail(String email) {
+        return contactDetailsRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    }
 
     @Override
     public List<ContactDetails> getAllContactDetails() {

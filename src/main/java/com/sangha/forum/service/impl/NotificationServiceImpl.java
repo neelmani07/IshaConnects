@@ -1,6 +1,6 @@
 package com.sangha.forum.service.impl;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.forum.dto.NotificationDTO;
 import com.sangha.forum.entity.Category;
 import com.sangha.forum.service.NotificationService;
@@ -28,7 +28,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendMentionNotification(ContactDetails mentionedUser, ContactDetails mentionedBy, Long postId, Long commentId, String content) {
         NotificationDTO notification = new NotificationDTO();
         notification.setType("MENTION");
-        notification.setMessage(mentionedBy.getName() + " mentioned you in " + (commentId != null ? "a comment" : "a post"));
+        notification.setMessage(mentionedBy.getFirstName() + " " + mentionedBy.getLastName() + " mentioned you in " + (commentId != null ? "a comment" : "a post"));
         notification.setPostId(postId);
         notification.setCommentId(commentId);
         notification.setCreatedAt(LocalDateTime.now());
@@ -41,7 +41,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendUpvoteNotification(ContactDetails postOwner, ContactDetails user, Long postId) {
         NotificationDTO notification = new NotificationDTO();
         notification.setType("UPVOTE");
-        notification.setMessage(user.getName() + " upvoted your post.");
+        notification.setMessage(user.getFirstName() + " " + user.getLastName() + " upvoted your post.");
         notification.setPostId(postId);
         notification.setCreatedAt(LocalDateTime.now());
         notification.setRead(false);
@@ -53,7 +53,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendAcceptedAnswerNotification(ContactDetails postOwner, ContactDetails user, Long postId, Long commentId) {
         NotificationDTO notification = new NotificationDTO();
         notification.setType("ACCEPTED_ANSWER");
-        notification.setMessage(user.getName() + " accepted your answer.");
+        notification.setMessage(user.getFirstName() + " " + user.getLastName() + " accepted your answer.");
         notification.setPostId(postId);
         notification.setCommentId(commentId);
         notification.setCreatedAt(LocalDateTime.now());
@@ -66,7 +66,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendCommentNotification(ContactDetails postOwner, ContactDetails user, Long postId, Long commentId) {
         NotificationDTO notification = new NotificationDTO();
         notification.setType("COMMENT");
-        notification.setMessage(user.getName() + " commented on your post.");
+        notification.setMessage(user.getFirstName() + " " + user.getLastName() + " commented on your post.");
         notification.setPostId(postId);
         notification.setCommentId(commentId);
         notification.setCreatedAt(LocalDateTime.now());

@@ -1,6 +1,6 @@
 package com.sangha.forum.controller;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.forum.dto.NotificationDTO;
 import com.sangha.forum.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;

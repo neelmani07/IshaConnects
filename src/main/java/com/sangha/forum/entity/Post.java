@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.connect.entity.Point;
 
 import jakarta.persistence.Column;

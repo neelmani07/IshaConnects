@@ -6,13 +6,13 @@ import com.sangha.connect.dto.ConnectionRequestNotification;
 import com.sangha.connect.entity.Connection;
 import com.sangha.connect.entity.ConnectionRequest;
 import com.sangha.connect.entity.ConnectionStatus;
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.connect.exception.BadRequestException;
 import com.sangha.connect.exception.ResourceNotFoundException;
 import com.sangha.connect.repository.ConnectionRepository;
 import com.sangha.connect.repository.ConnectionRequestRepository;
 import com.sangha.connect.service.ConnectionService;
-import com.sangha.connect.service.ContactDetailsService;
+import com.sangha.common.service.ContactDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -49,7 +49,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         request.setStatus(ConnectionStatus.PENDING);
         request = connectionRequestRepository.save(request);
         
-        sendConnectionRequestNotification(receiver, sender.getName(), message);
+        sendConnectionRequestNotification(receiver, sender.getFirstName() + " " + sender.getLastName(), message);
         
         return request;
     }
@@ -79,7 +79,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         request.setStatus(ConnectionStatus.REJECTED);
         connectionRequestRepository.save(request);
         
-        notifyRequestRejected(request.getSender(), request.getReceiver().getName());
+        notifyRequestRejected(request.getSender(), request.getReceiver().getFirstName() + " " + request.getReceiver().getLastName());
     }
     
     @Override
@@ -109,7 +109,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         messagingTemplate.convertAndSendToUser(
             user.getId().toString(),
             "/queue/connections",
-            new ConnectionNotification(connectedUser.getName())
+            new ConnectionNotification(connectedUser.getFirstName() + " " + connectedUser.getLastName())
         );
     }
     

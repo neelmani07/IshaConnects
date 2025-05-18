@@ -1,8 +1,8 @@
 package com.sangha.connect.controller;
 
 import com.sangha.common.dto.ApiResponse;
-import com.sangha.connect.entity.ContactDetails;
-import com.sangha.connect.service.ContactDetailsService;
+import com.sangha.common.entity.ContactDetails;
+import com.sangha.common.service.ContactDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

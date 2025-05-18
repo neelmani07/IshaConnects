@@ -1,6 +1,6 @@
 package com.sangha.forum.repository;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.forum.entity.ReputationHistory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

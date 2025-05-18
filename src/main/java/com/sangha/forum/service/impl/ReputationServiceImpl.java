@@ -1,6 +1,6 @@
 package com.sangha.forum.service.impl;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.forum.entity.ReputationHistory;
 import com.sangha.forum.entity.UserReputation;
 import com.sangha.forum.repository.ReputationHistoryRepository;
@@ -74,6 +74,11 @@ public class ReputationServiceImpl implements ReputationService {
     @Override
     public Page<ReputationHistory> getReputationHistory(ContactDetails user, Pageable pageable) {
         return reputationHistoryRepository.findByUser(user, pageable);
+    }
+
+    @Override
+    public int getPoints(ContactDetails user) {
+        return getUserReputation(user).getTotalPoints();
     }
 
     @Override

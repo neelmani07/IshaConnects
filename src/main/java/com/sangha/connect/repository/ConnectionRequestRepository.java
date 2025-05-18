@@ -2,7 +2,7 @@ package com.sangha.connect.repository;
 
 import com.sangha.connect.entity.ConnectionRequest;
 import com.sangha.connect.entity.ConnectionStatus;
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.sangha.forum.service.impl;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.connect.entity.Point;
 import com.sangha.forum.dto.PostRequest;
 import com.sangha.forum.entity.Post;

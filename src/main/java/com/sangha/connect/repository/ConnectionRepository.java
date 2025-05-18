@@ -1,7 +1,7 @@
 package com.sangha.connect.repository;
 
 import com.sangha.connect.entity.Connection;
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

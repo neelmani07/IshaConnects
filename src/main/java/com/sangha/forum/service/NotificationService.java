@@ -1,6 +1,6 @@
 package com.sangha.forum.service;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.forum.entity.Category;
 import com.sangha.forum.dto.NotificationDTO;
 import org.springframework.data.domain.Page;

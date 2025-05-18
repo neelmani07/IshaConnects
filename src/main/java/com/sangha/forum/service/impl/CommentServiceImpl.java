@@ -1,6 +1,6 @@
 package com.sangha.forum.service.impl;
 
-import com.sangha.connect.entity.ContactDetails;
+import com.sangha.common.entity.ContactDetails;
 import com.sangha.forum.config.ReputationConfig;
 import com.sangha.forum.dto.CommentDTO;
 import com.sangha.forum.entity.Comment;
